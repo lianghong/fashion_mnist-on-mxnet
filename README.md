@@ -3,12 +3,10 @@ A dataset of Zalando's article images consisting of a training set of 60,000 exa
 
 Project repo :https://github.com/zalandoresearch/fashion-mnist
 
-Getting data
-$ mkdir data
-$ cd data
-$ wget https://github.com/zalandoresearch/fashion-mnist/blob/master/data/fashion/t10k-images-idx3-ubyte.gz
-$ wget https://github.com/zalandoresearch/fashion-mnist/blob/master/data/fashion/t10k-labels-idx1-ubyte.gz
-$ wget https://github.com/zalandoresearch/fashion-mnist/blob/master/data/fashion/train-images-idx3-ubyte.gz
-$ wget https://github.com/zalandoresearch/fashion-mnist/blob/master/data/fashion/train-labels-idx1-ubyte.gz
+How to run :
+python3 fashion-mnist.py --cuda --batch-size 200 --epochs 25 --lr 0.1 --momentum 0.8
+
+Current performance :
+Validation: accuracy=0.900500
 
 
