@@ -5,25 +5,25 @@
 
 import argparse
 import logging
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 import numpy as np
 import mxnet as mx
 from mxnet import gluon, autograd
 from mxnet.gluon import nn
-
 from fashion_mnist_reader import FASHION_MNIST
 
 # Parse CLI arguments
 
 parser = argparse.ArgumentParser(description='MXNet Gluon Fashion-MNIST Example')
-parser.add_argument('--batch-size', type=int, default=100,
+parser.add_argument('--batch-size', type=int, default=200,
                     help='batch size for training and testing (default: 100)')
-parser.add_argument('--epochs', type=int, default=30,
+parser.add_argument('--epochs', type=int, default=25,
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--lr', type=float, default=0.1,
                     help='learning rate (default: 0.1)')
-parser.add_argument('--momentum', type=float, default=0.9,
+parser.add_argument('--momentum', type=float, default=0.8,
                     help='SGD momentum (default: 0.9)')
 parser.add_argument('--cuda', action='store_true', default=False,
                     help='Train on GPU with CUDA')
@@ -33,20 +33,20 @@ opt = parser.parse_args()
 
 
 # define network
-
 net = nn.Sequential()
 with net.name_scope():
+    net.add(nn.Dense(256, activation='relu'))
     net.add(nn.Dense(128, activation='relu'))
     net.add(nn.Dense(64, activation='relu'))
     net.add(nn.Dense(10))
 
 # data
-
 def transformer(data, label):
-    data = data.reshape((-1,)).astype(np.float32)/255
+    data = data.reshape((-1,)).astype(np.float32) / 255
     return data, label
 
-#----- fashion-mnist data-------
+
+# ----- fashion-mnist data-------
 train_data = gluon.data.DataLoader(
     FASHION_MNIST('./data', train=True, transform=transformer),
     batch_size=opt.batch_size, shuffle=True, last_batch='discard')
@@ -56,7 +56,6 @@ val_data = gluon.data.DataLoader(
     batch_size=opt.batch_size, shuffle=False)
 
 # train
-
 def test(ctx):
     metric = mx.metric.Accuracy()
     for data, label in val_data:
@@ -97,13 +96,13 @@ def train(epochs, ctx):
 
             if i % opt.log_interval == 0 and i > 0:
                 name, acc = metric.get()
-                print('[Epoch %d Batch %d] Training: %s=%f'%(epoch, i, name, acc))
+                print('[Epoch %d Batch %d] Training: %s=%f' % (epoch, i, name, acc))
 
         name, acc = metric.get()
-        print('[Epoch %d] Training: %s=%f'%(epoch, name, acc))
+        print('[Epoch %d] Training: %s=%f' % (epoch, name, acc))
 
         name, val_acc = test(ctx)
-        print('[Epoch %d] Validation: %s=%f'%(epoch, name, val_acc))
+        print('[Epoch %d] Validation: %s=%f' % (epoch, name, val_acc))
 
     net.save_params('mnist.params')
 
